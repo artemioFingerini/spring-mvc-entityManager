@@ -1,37 +1,45 @@
 package web.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import web.model.User;
 import web.service.UserService;
 
+import javax.validation.Valid;
+
 
 @Controller
 public class UserController {
-    @Autowired
-    UserService userService;
+
+    private UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping("/")
-    public String getHomeUsers(Model model) {
-        model.addAttribute("users", userService.getAllUsers());// не знаю правильно ли так делать,
-        return "redirect:/users";  // но без двух практически одинаковых методов у меня не работало направление на домашнюю страницу юзерс
+    public String getHomeUsers() {
+        return "redirect:/users";
     }
+
     @GetMapping("/users")
     public String getAllUsers(Model model) {
         model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("user", new User());
         return "users";
     }
 
     @PostMapping("/users/add")
-    public String addUser(@RequestParam String firstname, @RequestParam String lastname, @RequestParam String email) {
-        User user = new User();
-        user.setFirstName(firstname);
-        user.setLastName(lastname);
-        user.setEmail(email);
+    public String addUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("users", userService.getAllUsers());
+            return "users";
+        }
         userService.saveUser(user);
         return "redirect:/users";
     }
@@ -42,17 +50,17 @@ public class UserController {
         model.addAttribute("user", user);
         return "editUser";
     }
+
     @PostMapping("/users/update")
-    public String updateUser(@RequestParam Long id, @RequestParam String firstname, @RequestParam String lastname, @RequestParam String email) {
-        User user = userService.getById(id);
-        if (user != null) {
-            user.setFirstName(firstname);
-            user.setLastName(lastname);
-            user.setEmail(email);
-            userService.updateUser(user);
+    public String updateUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("users", userService.getAllUsers());
+            return "editUser";
         }
+        userService.updateUser(user);
         return "redirect:/users";
     }
+
     @PostMapping("/users/delete")
     public String deleteUser(@RequestParam Long id) {
         userService.deleteUserById(id);

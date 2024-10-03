@@ -24,11 +24,13 @@
         <td th:text="${user.lastName}">Фамилия</td>
         <td th:text="${user.email}">email@example.com</td>
         <td>
-            <a th:href="@{/users/edit(id=${user.id})}"><button type="submit">Изменить</button></a>
+            <a th:href="@{/users/edit(id=${user.id})}">
+                <button type="submit">Изменить</button>
+            </a>
         </td>
         <td>
-            <form th:action="@{/users/delete}" method="post">
-                <input type="hidden" name="id" th:value="${user.id}" />
+            <form th:action="@{/users/delete(id=${user.id})}" method="post">
+                <input type="hidden" name="id" th:value="${user.id}"/>
                 <button type="submit">Удалить</button>
             </form>
         </td>
@@ -38,12 +40,28 @@
 <hr/>
 
 <h2>Добавить пользователя</h2>
-<form th:action="@{/users/add}" method="post">
-    <input type="text" name="firstname" placeholder="Имя" required/>
-    <input type="text" name="lastname" placeholder="Фамилия" required/>
-    <input type="email" name="email" placeholder="Email" required/>
+<form th:action="@{/users/add}" method="post" th:object="${user}">
+    <div>
+        <label for="firstName">Имя:</label>
+        <input type="text" id="firstName" th:field="*{firstName}" required/>
+        <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
+    </div>
+
+    <div>
+        <label for="lastName">Фамилия:</label>
+        <input type="text" id="lastName" th:field="*{lastName}" required/>
+        <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
+    </div>
+
+    <div>
+        <label for="email">Email:</label>
+        <input type="text" id="email" th:field="*{email}" required/>
+        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+    </div>
+
     <button type="submit">Добавить</button>
 </form>
+
 
 <hr/>
 </body>

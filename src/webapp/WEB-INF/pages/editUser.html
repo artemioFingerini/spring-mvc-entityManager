@@ -7,14 +7,30 @@
 <body>
 
 <h2>Редактировать пользователя</h2>
-<form th:action="@{/users/update}" method="post">
-    <input type="hidden" name="id" th:value="${user.id}"/>
-    <input type="text" name="firstname" th:value="${user.firstName}" placeholder="Имя" required/>
-    <input type="text" name="lastname" th:value="${user.lastName}" placeholder="Фамилия" required/>
-    <input type="email" name="email" th:value="${user.email}" placeholder="Email" required/>
+<form th:action="@{/users/update}" method="post" th:object="${user}">
+    <input type="hidden" th:field="*{id}"/>
+    <div>
+        <label for="firstName">Имя:</label>
+        <input type="text" id="firstName" th:field="*{firstName}" required/>
+        <div th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
+    </div>
+
+    <div>
+        <label for="lastName">Фамилия:</label>
+        <input type="text" id="lastName" th:field="*{lastName}" required/>
+        <div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
+    </div>
+
+    <div>
+        <label for="email">Email:</label>
+        <input type="text" id="email" th:field="*{email}" required/>
+        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+    </div>
+
     <button type="submit">Обновить</button>
+
     <a th:href="@{/users}">
-        <button type="button">Назад к списку пользователей</button>
+        <button type="submit">Вернуться на страницу пользователей</button>
     </a>
 </form>
 
