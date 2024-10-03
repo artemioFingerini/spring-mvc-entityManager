@@ -24,10 +24,13 @@
         <td th:text="${user.lastName}">Фамилия</td>
         <td th:text="${user.email}">email@example.com</td>
         <td>
-            <a th:href="@{/users/edit(id=${user.id})}">Изменить</a>
+            <a th:href="@{/users/edit(id=${user.id})}"><button type="submit">Изменить</button></a>
         </td>
         <td>
-            <a th:href="@{/users/delete(id=${user.id})}">Удалить</a>
+            <form th:action="@{/users/delete}" method="post">
+                <input type="hidden" name="id" th:value="${user.id}" />
+                <button type="submit">Удалить</button>
+            </form>
         </td>
     </tr>
     </tbody>
